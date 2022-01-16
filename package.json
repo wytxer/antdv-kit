@@ -1,0 +1,74 @@
+{
+  "name": "@wytxer/antdv-kit",
+  "version": "1.0.0",
+  "description": "基于 ant-design-vue 封装的一套组件库，主要是增强了部分组件的功能，例如 Upload、DatePicker 等。",
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "main": "src/index.js",
+  "dependencies": {
+    "vue-draggable-resizable": "^2.2.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "babel-eslint": "^10.1.0",
+    "core-js": "^3.20.2",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^6.2.2",
+    "lint-staged": "^9.5.0",
+    "vue": "^2.6.14",
+    "vue-ls": "^3.2.2",
+    "vue-template-compiler": "^2.6.14"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/wytxer/antdv-kit/#readme",
+  "keywords": [
+    "antd",
+    "ui kit",
+    "ant design vue",
+    "antdv",
+    "antdv kit"
+  ],
+  "author": {
+    "name": "wytxer",
+    "url": "https://github.com/wytxer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wytxer/antdv-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wytxer/antdv-kit/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "ie >= 11"
+  ],
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "src/*.{js,vue}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  },
+  "files": [
+    "src"
+  ]
+}

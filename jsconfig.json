@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+    "resolveJsonModule": false
+  },
+  "include": [
+    "./src/**/*",
+    "./babel.config.js",
+    "./vue.config.js"
+  ]
+}
