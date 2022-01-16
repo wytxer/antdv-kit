@@ -6,3 +6,8 @@
 ## 使用文档
 
 [传送门](http://v2.docs.bszhct.com/components/quick-start.html)
+
+
+## License
+
+[MIT](/LICENSE)
