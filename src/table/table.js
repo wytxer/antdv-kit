@@ -65,7 +65,7 @@ export default {
      */
     pageSize: {
       type: Number,
-      default: 10
+      default: undefined
     },
     /**
      * 是否可以改变 pageSize，会合并到 pagination 中
@@ -138,7 +138,7 @@ export default {
       localPagination = {
         ...this.pagination,
         current: this.currentPage,
-        pageSize: this.pageSize,
+        pageSize: this.pageSize || (this.$AKIT || {}).pageSize || 10,
         pageSizeOptions,
         showSizeChanger: this.showSizeChanger,
         showTotal: total => `总计 ${total} 条`
@@ -231,6 +231,9 @@ export default {
         attrs.props.components = { ...this.componentHeader, ...this.components }
       }
       return attrs
+    },
+    localPageSize () {
+      return this.pageSize || (this.$AKIT || {}).pageSize || 10
     }
   },
   created () {
@@ -248,7 +251,7 @@ export default {
     refresh (resetPage = false) {
       if (resetPage) {
         this.localPagination.current = 1
-        this.localPagination.pageSize = 10
+        this.localPagination.pageSize = this.localPageSize
       }
       // 表格出现加载数据的时候，清空行选择 selectedRowKeys
       if (this.clearSelectedRowKeys && this.selectedRowKeys && this.selectedRowKeys.length > 0) {
@@ -267,7 +270,7 @@ export default {
       // 组装请求参数
       const params = {
         currentPage: (pagination && pagination.current) || (this.showPagination && this.localPagination.current) || this.currentPage,
-        pageSize: (pagination && pagination.pageSize) || (this.showPagination && this.localPagination.pageSize) || this.pageSize,
+        pageSize: (pagination && pagination.pageSize) || (this.showPagination && this.localPagination.pageSize) || this.localPageSize,
         ...filters
       }
       // 添加排序参数

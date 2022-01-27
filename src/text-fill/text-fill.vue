@@ -1,5 +1,5 @@
 <template>
-  <span>{{ text || hr || '--' }}</span>
+  <span>{{ shoeText }}</span>
 </template>
 
 <script>
@@ -19,6 +19,11 @@ export default {
     hr: {
       type: String,
       default: ''
+    }
+  },
+  computed: {
+    shoeText () {
+      return this.text || this.hr || (this.$AKIT || {}).textFill || '--'
     }
   }
 }

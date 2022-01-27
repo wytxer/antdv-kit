@@ -17,7 +17,18 @@ const components = [
   AkDateYear
 ]
 
-const install = Vue => {
+const install = (Vue, options) => {
+  const { pageSize = 10, textFill = '--' } = options || {}
+  // 添加全局配置
+  Vue.prototype.$AKIT = {
+    // 默认的分页条数
+    pageSize,
+    // 默认的空字符串占位符
+    textFill
+  }
+  // 添加空字符占位
+  Vue.prototype.$textFill = textFill
+
   Vue.component('ak-draggable', AkDraggable)
   components.forEach(component => {
     Vue.component(component.name, component)
@@ -40,6 +51,6 @@ export {
 }
 
 export default {
-  version: '1.0.0',
+  version: '1.1.0',
   install
 }
