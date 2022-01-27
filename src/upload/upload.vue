@@ -42,7 +42,7 @@
         <a-progress :percent="parseInt((item.current / item.total) * 100) || 0"></a-progress>
       </div>
     </div>
-    <ak-viewer v-model="fileList" :show-file-list="false" ref="viewer"></ak-viewer>
+    <ak-viewer v-if="!showDirectories" v-model="fileList" :show-file-list="false" ref="viewer"></ak-viewer>
   </div>
 </template>
 
@@ -578,19 +578,19 @@ export default {
       return Promise.all(asyncList)
     },
     // 如果是文件夹上传
-    onCustomUpload (file) {
+    async onCustomUpload (file) {
       const formData = new FormData()
       const relativePath = file.file.webkitRelativePath
       formData.append('file', file.file)
       formData.append('directory', relativePath.split('/').slice(0, -1).join('/'))
 
-      const request = this.$http || this.axios || this.$axios
+      const request = this.$request || this.$http || this.axios || this.$axios
       if (!request) {
         if (this.$message) {
-          this.$message.error('请先配置 $http 或 axios 或 $axios')
+          this.$message.error('请先配置 $request 或 $http 或 axios 或 $axios')
           return
         } else {
-          throw new Error('请先配置 $http 或 axios 或 $axios')
+          throw new Error('请先配置 $request 或 $http 或 axios 或 $axios')
         }
       }
       return request.post(this.actionUrl, formData, { withCredentials: true })
