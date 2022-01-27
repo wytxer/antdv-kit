@@ -1,3 +1,9 @@
+## 1.1.0 - 2022-01-16
+
+- ak-upload 支持 $request
+- 全局挂载组件时支持设置 pageSize 和 textFill 字段
+
+
 ## 1.0.0 - 2022-01-16
 
 - 支持 auto-tooltip 组件
