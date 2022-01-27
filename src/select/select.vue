@@ -58,7 +58,7 @@ export default {
     }
   },
   watch: {
-    loadData (newValue) {
+    async loadData (newValue) {
       if (!newValue) {
         this.loading = false
         return
@@ -72,7 +72,7 @@ export default {
       }
       if (isFunction(newValue)) {
         if (newValue) {
-          this.options = newValue()
+          this.options = await newValue()
         }
         this.loading = false
       }
