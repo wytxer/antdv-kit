@@ -4,7 +4,7 @@ import AkTable from './table'
 import AkAutoTooltip from './auto-tooltip'
 import AkUpload from './upload'
 import AkViewer, { viewerBox } from './viewer'
-import AkDateYear from './year-picker'
+import AkYearPicker from './year-picker'
 import AkDraggable from 'vue-draggable-resizable'
 
 const components = [
@@ -14,7 +14,7 @@ const components = [
   AkAutoTooltip,
   AkUpload,
   AkViewer,
-  AkDateYear
+  AkYearPicker
 ]
 
 const install = (Vue, options) => {
@@ -47,10 +47,10 @@ export {
   AkAutoTooltip,
   AkUpload,
   AkViewer,
-  AkDateYear
+  AkYearPicker
 }
 
 export default {
-  version: '1.1.0',
+  version: '1.1.1',
   install
 }

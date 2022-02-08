@@ -1,4 +1,4 @@
-
+<script>
 import Table from 'ant-design-vue/es/table'
 import { isArray, isFunction, isObject } from '../utils/index'
 import Vue from 'vue'
@@ -19,99 +19,99 @@ export default {
   props: {
     ...Table.props,
     /**
-     * 同 a-table 的 scroll，内置 x 的值
-     */
+       * 同 a-table 的 scroll，内置 x 的值
+       */
     scroll: {
       type: Object,
       default: () => ({ x: '100%' })
     },
     /**
-     * table 尺寸，同 a-table 的 size，内置默认值为 small
-     */
+       * table 尺寸，同 a-table 的 size，内置默认值为 small
+       */
     size: {
       type: String,
       default: 'small'
     },
     /**
-     * 加载数据方法，支持函数、数组、对象
-     */
+       * 加载数据方法，支持函数、数组、对象
+       */
     loadData: {
       type: [Function, Object, Array, Boolean],
       required: true
     },
     /**
-     * 是否自动请求数据
-     */
+       * 是否自动请求数据
+       */
     autoLoad: {
       type: Boolean,
       default: true
     },
     /**
-     * 是否展示分页
-     */
+       * 是否展示分页
+       */
     showPagination: {
       type: [String, Boolean],
       default: 'auto'
     },
     /**
-     * 当前页数，会合并到 pagination 中
-     */
+       * 当前页数，会合并到 pagination 中
+       */
     currentPage: {
       type: Number,
       default: 1
     },
     /**
-     * 当前每页条数，会合并到 pagination 中
-     */
+       * 当前每页条数，会合并到 pagination 中
+       */
     pageSize: {
       type: Number,
       default: undefined
     },
     /**
-     * 是否可以改变 pageSize，会合并到 pagination 中
-     */
+       * 是否可以改变 pageSize，会合并到 pagination 中
+       */
     showSizeChanger: {
       type: Boolean,
       default: true
     },
     /**
-     * 表头 th 是否可以拖动改变列宽
-     */
+       * 表头 th 是否可以拖动改变列宽
+       */
     drag: {
       type: Boolean,
       default: false
     },
     /**
-     * 是否需要缓存 columns 数据
-     */
+       * 是否需要缓存 columns 数据
+       */
     columnStorage: {
       type: Boolean,
       default: false
     },
     /**
-     * 是否开启行拖拽排序
-     */
+       * 是否开启行拖拽排序
+       */
     dragSort: {
       type: Boolean,
       default: false
     },
     /**
-     * 是否显示当前选中行的信息，包含条数、列总计等，结构：{ show: true, clear: Function }
-     */
+       * 是否显示当前选中行的信息，包含条数、列总计等，结构：{ show: true, clear: Function }
+       */
     alert: {
       type: [Object, Boolean],
       default: null
     },
     /**
-     * 同 a-table 的 rowSelection
-     */
+       * 同 a-table 的 rowSelection
+       */
     rowSelection: {
       type: Object,
       default: null
     },
     /**
-     * 是否开启刷新时候清空行选择功能
-     */
+       * 是否开启刷新时候清空行选择功能
+       */
     clearSelectedRowKeys: {
       type: Boolean,
       default: false
@@ -245,9 +245,9 @@ export default {
   },
   methods: {
     /**
-     * 表格重新加载方法
-     * @param {Boolean} resetPage 如果参数为 true，则强制刷新到第一页
-     */
+       * 表格重新加载方法
+       * @param {Boolean} resetPage 如果参数为 true，则强制刷新到第一页
+       */
     refresh (resetPage = false) {
       if (resetPage) {
         this.localPagination.current = 1
@@ -260,11 +260,11 @@ export default {
       this.tableChange()
     },
     /**
-     * 加载数据方法
-     * @param {Object} pagination 分页参数
-     * @param {Object} filters 过滤条件
-     * @param {Object} sorter 排序条件
-     */
+       * 加载数据方法
+       * @param {Object} pagination 分页参数
+       * @param {Object} filters 过滤条件
+       * @param {Object} sorter 排序条件
+       */
     tableChange (pagination, filters, sorter) {
       this.localLoading = true
       // 组装请求参数
@@ -286,11 +286,11 @@ export default {
       if (isObject(this.loadData)) {
         this.queryData(this.loadData, pagination)
 
-      // 如果是数组，重新组装成对象的结构
+        // 如果是数组，重新组装成对象的结构
       } else if (isArray(this.loadData)) {
         this.queryData({ rows: this.loadData }, pagination)
 
-      // 如果是函数
+        // 如果是函数
       } else if (isFunction(this.loadData)) {
         // 获取到的数据
         const result = this.loadData(params)
@@ -298,7 +298,7 @@ export default {
         if (isObject(result)) {
           this.queryData(result, pagination)
 
-        // 否则如果是异步请求
+          // 否则如果是异步请求
         } else if (result && isFunction(result.then)) {
           result.then(res => {
             this.queryData(res.data || res, pagination)
@@ -309,10 +309,10 @@ export default {
       }
     },
     /**
-     * 格式化表格数据
-     * @param {Object} data 列表数据，结构为 { data: { rows: [], currentPage: 1, totalSize: 1 } }
-     * @param {Object} pagination 分页数据
-     */
+       * 格式化表格数据
+       * @param {Object} data 列表数据，结构为 { data: { rows: [], currentPage: 1, totalSize: 1 } }
+       * @param {Object} pagination 分页数据
+       */
     queryData (data, pagination) {
       // 兼容 currentPage 字段，后端可能返回的是 pageNo
       if (data.pageNo) {
@@ -586,3 +586,4 @@ export default {
     )
   }
 }
+</script>
