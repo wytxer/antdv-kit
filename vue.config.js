@@ -23,6 +23,5 @@ module.exports = {
     // }
   },
   chainWebpack: config => {
-
   }
 }
