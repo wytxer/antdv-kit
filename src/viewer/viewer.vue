@@ -27,12 +27,13 @@
 
     <!-- 显示文件 -->
     <transition name="scale" @after-leave="() => onAfterClosed()">
-      <div v-if="visible" class="ak-viewer-modal-wrap">
+      <div v-if="visible" ref="viewerModal" :class="['ak-viewer-modal-wrap', {'ak-viewer-modal-drag': drag}]" :style="viewerWrapStyle" @mousewheel="onScrollScale">
+        <div class="viewer-drag-bar" v-if="drag" @mousedown.stop.prevent="onBarMouseDown" />
         <a-icon type="close" class="icon-fixed icon-close" @click="onHideModal" />
         <div class="preview-content">
           <img v-if="record.fileType === 'image'" class="item-image" :key="record.url" :style="imgStyle" :src="record.url" @load="onImgLoad" @mousedown.stop.prevent="onImgMouseDown" />
           <video v-if="record.fileType === 'video'" class="item-video" controls :src="record.url" />
-          <video v-if="record.fileType === 'audio'" class="item-audio" controls :src="record.url" />
+          <audio v-if="record.fileType === 'audio'" class="item-audio" controls :src="record.url" />
           <template v-if="record.fileType === 'pdf'">
             <ak-pdf-canvas v-if="usePdf" :url="record.url" v-bind="typeof usePdf === 'boolean' ? null : usePdf" />
             <iframe v-else class="item-iframe" :src="record.url" />
@@ -59,6 +60,7 @@
 
             <a-icon type="left" @click="onFileRightSwitch" :disabled="activeRecordIndex <= 0" />
             <a-icon type="right" @click="onFileLeftSwitch" :disabled="activeRecordIndex >= records.length - 1" />
+            <a-icon type="link" @click="onNewTabOpen" />
           </div>
         </div>
 
@@ -94,6 +96,9 @@ const fileTypes = ['image', 'video', 'audio', 'pdf', 'file']
 export default {
   name: 'ak-viewer',
   data () {
+    const width = this.drag ? 800 : window.innerWidth
+    const height = this.drag ? 600 : window.innerHeight
+
     return {
       visible: false,
       loading: false,
@@ -113,7 +118,14 @@ export default {
       currentPage: 0,
 
       // 文件左右切换的页数维护
-      activeRecordIndex: 0
+      activeRecordIndex: 0,
+      // 预览容器的位置
+      viewerConfig: {
+        left: (window.innerWidth - width) / 2,
+        top: (window.innerHeight - height) / 2,
+        width,
+        height
+      }
     }
   },
   props: {
@@ -202,6 +214,11 @@ export default {
     showDownload: {
       type: Boolean,
       default: false
+    },
+    // 弹框可拖动
+    drag: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -216,7 +233,9 @@ export default {
         this.$nextTick(() => {
           this.calcToolbarWidth()
         })
-        document.body.style.overflow = 'hidden'
+        if (!this.drag) {
+          document.body.style.overflow = 'hidden'
+        }
       }
     }
   },
@@ -244,6 +263,12 @@ export default {
         justifyContent: this.totalWidth < this.mainWidth ? 'center' : 'flex-start',
         transform: `translateX(${-this.currentPage * this.mainWidth}px)`
       }
+    },
+    viewerWrapStyle () {
+      return {
+        left: `${this.viewerConfig.left}px`,
+        top: `${this.viewerConfig.top}px`
+      }
     }
   },
   components: {
@@ -252,15 +277,6 @@ export default {
   created () {
     // 如果绑定了默认值
     this.transferValue(this.value)
-  },
-  mounted () {
-    // 监听滚轮缩放图片
-    window.addEventListener('mousewheel', this.onScrollScale)
-    window.addEventListener('DOMMouseScroll', this.onScrollScale)
-  },
-  destroyed () {
-    window.removeEventListener('mousewheel', this.onScrollScale)
-    window.removeEventListener('DOMMouseScroll', this.onScrollScale)
   },
   methods: {
     // 显示弹框
@@ -442,8 +458,8 @@ export default {
     },
     // 图片加载完毕之后计算 left 的值，然后显示图片
     onImgLoad (e) {
-      this.left = (window.innerWidth - e.target.width) / 2
-      this.top = (window.innerHeight - e.target.height - 77) / 2
+      this.left = (this.viewerConfig.width - e.target.width) / 2
+      this.top = (this.viewerConfig.height - e.target.height - 77) / 2
       this.scale = 1
     },
     // 旋转
@@ -466,11 +482,19 @@ export default {
     },
     // 滚动缩放图片
     onScrollScale (e) {
-      // 火狐浏览器是正好反过来的
-      if (e.wheelDelta > 0 || e.detail < 0) {
-        this.onScaleAddChange()
-      } else {
-        this.onScaleLessChange()
+      if (e.currentTarget && e.currentTarget === this.$refs.viewerModal) {
+        if (e.preventDefault) {
+          e.preventDefault()
+        } else {
+          e.returnValue = true
+        }
+        e.preventDefault()
+        // 火狐浏览器是正好反过来的
+        if (e.wheelDelta > 0 || e.detail < 0) {
+          this.onScaleAddChange()
+        } else {
+          this.onScaleLessChange()
+        }
       }
     },
     // 图片拖动
@@ -486,10 +510,22 @@ export default {
         document.onmouseup = null
       }
     },
+    onBarMouseDown (e) {
+      const x = e.clientX - this.viewerConfig.left
+      const y = e.clientY - this.viewerConfig.top
+      document.onmousemove = (es) => {
+        this.viewerConfig.left = es.clientX - x
+        this.viewerConfig.top = es.clientY - y
+      }
+      document.onmouseup = () => {
+        document.onmousemove = null
+        document.onmouseup = null
+      }
+    },
     // 计算预览工具栏宽度
     calcToolbarWidth () {
       // 左右的间距
-      const mainWidth = window.innerWidth - 66 * 2
+      const mainWidth = this.viewerConfig.width - 66 * 2
       // 48 是一个预览图标占用的总宽度
       const totalWidth = this.records.length * 48
       this.mainWidth = mainWidth
@@ -525,19 +561,30 @@ export default {
         this.currentPage = currentPage
       }
     },
+    // 新窗口打开文件
+    onNewTabOpen () {
+      window.open(this.record.url)
+    },
     // 文件下载
     onFileDownload () {
-      if (this.$http) {
-        this.$http({
-          url: this.record.url,
-          method: 'GET',
-          headerType: 'download'
-        }).then(res => {
-          if (this.$message) {
-            this.$message.sussess('下载成功')
-          }
-        })
+      const request = this.$request || this.$http || this.axios || this.$axios
+      if (!request) {
+        if (this.$message) {
+          this.$message.error('请先配置 $request 或 $http 或 axios 或 $axios')
+          return
+        } else {
+          throw new Error('请先配置 $request 或 $http 或 axios 或 $axios')
+        }
       }
+      request({
+        url: this.record.url,
+        method: 'GET',
+        headerType: 'download'
+      }).then(res => {
+        if (this.$message) {
+          this.$message.sussess('下载成功')
+        }
+      })
     }
   }
 }
@@ -556,6 +603,43 @@ export default {
   background-color: rgba(0, 0, 0, 0.5);
   user-select: none;
   z-index: 3999;
+  &.ak-viewer-modal-drag {
+    width: 800px;
+    height: 600px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    .icon-close {
+      right: 0;
+      top: 0;
+      width: 32px;
+      height: 32px;
+      line-height: 36px;
+      background-color: transparent;
+      /deep/ svg {
+        right: 0;
+        top: 0;
+      }
+    }
+    .viewer-drag-bar {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 32px;
+      z-index: 99;
+      background-color: #181818;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      cursor: move;
+    }
+    .preview-content {
+      height: calc(600px - 77px);
+      padding-top: 32px;
+      .item-image {
+        max-width: 100%;
+      }
+    }
+  }
   @keyframes shine {
     0% {
       background-position: -1px -1px;
