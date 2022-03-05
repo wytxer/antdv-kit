@@ -7,8 +7,8 @@ import { isArray, isFunction } from './index'
 const loadDataMixin = {
   props: {
     /**
-     * 加载数据的方法，支持普通函数、Promise 函数、数组
-     */
+      * 加载数据的方法，支持普通函数、Promise 函数、数组
+      */
     loadData: {
       type: [Function, Array],
       default: null,
@@ -19,11 +19,11 @@ const loadDataMixin = {
     },
     params: {
       type: Object,
-      default: () => ({})
+      default: null
     },
     data: {
       type: Object,
-      default: () => ({})
+      default: null
     }
   },
   created () {
@@ -38,7 +38,14 @@ const loadDataMixin = {
         this.loading = false
         return
       }
-      const result = this.loadData({ params: this.params, data: this.data })
+      const values = {}
+      if (this.params) {
+        values.params = this.params
+      }
+      if (this.data) {
+        values.data = this.data
+      }
+      const result = this.loadData(values)
       if (!result) {
         this.loading = false
         return
