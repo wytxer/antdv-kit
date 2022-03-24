@@ -351,11 +351,6 @@ export default {
         this.localPagination.current--
         this.tableChange()
       }
-
-      // 当数据条数不满足一页时关闭分页功能
-      if (this.showPagination && data.totalSize <= (data.currentPage * this.localPagination.pageSize)) {
-        this.localPagination.hideOnSinglePage = true
-      }
       // 返回结果中的数组数据
       this.localDataSource = data.rows
       this.localLoading = false
