@@ -5,7 +5,7 @@
 
 ## 使用文档
 
-[传送门](http://v2.docs.bszhct.com/components/quick-start.html)
+[传送门](http://docs.wi.bszhct.com/components/quick-start.html)
 
 
 ## License
