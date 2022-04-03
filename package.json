@@ -1,6 +1,6 @@
 {
   "name": "@wytxer/antdv-kit",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "基于 ant-design-vue 封装的一套组件库，主要是增强了部分组件的功能，例如 Upload、DatePicker 等。",
   "scripts": {
     "dev": "vue-cli-service serve",
