@@ -2,8 +2,6 @@
 node_modules
 /dist
 /static
-yarn.lock
-package-lock.json
 
 /tests/e2e/reports/
 selenium-debug.log
