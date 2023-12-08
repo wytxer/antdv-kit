@@ -331,15 +331,23 @@ export default {
     },
     // 字段转换
     transformFields (items) {
-      return items.map(item => {
-        return {
-          ...item,
-          uid: item.uid || createId(),
-          name: item.name || item[this.keys.name],
-          url: this.getFileUrl(item),
-          status: item.status || 'done'
-        }
+      // ! 这里返回新数组会丢失响应数据
+      // return items.map(item => {
+      //   return {
+      //     ...item,
+      //     uid: item.uid || createId(),
+      //     name: item.name || item[this.keys.name],
+      //     url: this.getFileUrl(item),
+      //     status: item.status || 'done'
+      //   }
+      // })
+      items.forEach(item => {
+        item.uid = item.uid || createId()
+        item.name = item.name || item[this.keys.name]
+        item.url = this.getFileUrl(item)
+        item.status = item.status || 'done'
       })
+      return items
     },
     // 将文件列表转换成文件夹的形式
     fileListToDirectory (fileList) {
@@ -581,7 +589,7 @@ export default {
     async onCustomUpload (file) {
       const formData = new FormData()
       const relativePath = file.file.webkitRelativePath
-      formData.append('file', file.file)
+      formData.append(this.$attrs.name || 'file', file.file)
       formData.append('directory', relativePath.split('/').slice(0, -1).join('/'))
 
       const request = this.$request || this.$http || this.axios || this.$axios
@@ -593,17 +601,18 @@ export default {
           throw new Error('请先配置 $request 或 $http 或 axios 或 $axios')
         }
       }
-      return request.post(this.actionUrl, formData, { withCredentials: true })
-        .then(res => res.data)
+      return request.post(this.actionUrl, formData, { withCredentials: true, headerType: 'upload' })
+        .then(res => res.code !== undefined && res.data !== undefined ? res : res.data)
         .then(res => {
           // 成功之后直接调用成功的回调
-          if (res.code === 0) {
+          if (res.code === 0 || +res.code === 200) {
             file.onSuccess(res)
             return res
           } else { // code 不是 0 的处理成失败
             return Promise.reject(res)
           }
         })
+        .catch(file.onError)
     }
   }
 }
