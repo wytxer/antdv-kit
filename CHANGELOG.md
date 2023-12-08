@@ -1,3 +1,8 @@
+## 1.1.6 - 2022-12-08
+
+- 修复了 Upload 组件文件夹上传 response 字段丢失问题
+
+
 ## 1.1.5 - 2022-12-08
 
 - table currentPage 改成 pageNo
