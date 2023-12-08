@@ -64,6 +64,9 @@ devDependencies:
   vue-template-compiler:
     specifier: ^2.6.14
     version: 2.7.15
+  yorkie:
+    specifier: ^2.0.0
+    version: 2.0.0
 
 packages:
 
