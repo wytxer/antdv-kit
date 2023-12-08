@@ -56,7 +56,7 @@ export default {
     /**
        * 当前页数，会合并到 pagination 中
        */
-    currentPage: {
+    pageNo: {
       type: Number,
       default: 1
     },
@@ -137,7 +137,7 @@ export default {
     if (this.showPagination) {
       localPagination = {
         ...this.pagination,
-        current: this.currentPage,
+        current: this.pageNo,
         pageSize: this.pageSize || (this.$AKIT || {}).pageSize || 10,
         pageSizeOptions,
         showSizeChanger: this.showSizeChanger,
@@ -161,7 +161,7 @@ export default {
     }
   },
   watch: {
-    currentPage (newValue) {
+    pageNo (newValue) {
       this.localPagination.current = newValue
     },
     pageSize (newValue) {
@@ -269,7 +269,7 @@ export default {
       this.localLoading = true
       // 组装请求参数
       const params = {
-        currentPage: (pagination && pagination.current) || (this.showPagination && this.localPagination.current) || this.currentPage,
+        pageNo: (pagination && pagination.current) || (this.showPagination && this.localPagination.current) || this.pageNo,
         pageSize: (pagination && pagination.pageSize) || (this.showPagination && this.localPagination.pageSize) || this.localPageSize,
         ...filters
       }
@@ -310,22 +310,18 @@ export default {
     },
     /**
        * 格式化表格数据
-       * @param {Object} data 列表数据，结构为 { data: { rows: [], currentPage: 1, totalSize: 1 } }
+       * @param {Object} data 列表数据，结构为 { data: { rows: [], pageNo: 1, totalSize: 1 } }
        * @param {Object} pagination 分页数据
        */
     queryData (data, pagination) {
-      // 兼容 currentPage 字段，后端可能返回的是 pageNo
-      if (data.pageNo) {
-        data.currentPage = data.pageNo
-      }
       // 如果分页是无效的，重置为 1
-      if (!data.currentPage) {
-        data.currentPage = 1
+      if (!data.pageNo) {
+        data.pageNo = 1
       }
       // 如果没数据就初始化一份默认结构
       if (!data || (data.rows && data.rows.length === 0) || data.length === 0) {
         data = {
-          currentPage: 1,
+          pageNo: 1,
           rows: [],
           totalSize: 0
         }
@@ -335,7 +331,7 @@ export default {
         this.localPagination = {
           ...this.localPagination,
           // 返回结果中的当前分页数
-          current: (pagination && pagination.current) || data.currentPage,
+          current: (pagination && pagination.current) || data.pageNo,
           // 返回结果中的总记录数
           total: data.totalSize || 0,
           // 显示页数快捷跳转
